@@ -1,0 +1,30 @@
+CREATE VIEW borrow_history AS
+SELECT 
+    t.user_id,
+    u.user_role,
+    t.book_id,
+    b.book_category,
+    t.borrow_date,
+    t.return_date,
+    t.overdue_status
+FROM transactions t
+JOIN users u ON t.user_id = u.user_id
+JOIN books b ON t.book_id = b.book_id;
+
+DROP VIEW borrow_history;
+
+
+SELECT *
+FROM borrow_history
+LIMIT 100;
+
+CREATE VIEW inactive_borrows AS
+SELECT *
+FROM borrow_history
+WHERE overdue_status IS FALSE;
+
+DROP VIEW inactive_borrows;
+
+SELECT *
+FROM inactive_borrows
+LIMIT 100;

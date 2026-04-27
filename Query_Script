@@ -1,0 +1,35 @@
+SELECT *
+FROM users
+LIMIT 100;
+SELECT *
+FROM books
+LIMIT 100;
+SELECT *
+FROM transactions
+LIMIT 100;
+SELECT *
+FROM reservations
+LIMIT 100;
+SELECT 
+    t.user_id,
+    u.user_role,
+    t.book_id,
+    t.borrow_date,
+    t.return_date,
+    t.overdue_status
+FROM transactions t
+JOIN users u
+    ON t.user_id = u.user_id
+LIMIT 100;
+SELECT 
+    t.book_id,
+    b.book_category,
+    t.user_id,
+    t.borrow_date,
+    t.return_date
+FROM transactions t
+JOIN books b
+    ON t.book_id = b.book_id
+LIMIT 100;
+SELECT COUNT(*) AS total_transactions
+FROM transactions;

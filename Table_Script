@@ -1,0 +1,70 @@
+    DROP TABLE IF EXISTS transactions;
+    CREATE TABLE transactions (
+    user_id VARCHAR(50) PRIMARY KEY,
+    book_id VARCHAR(50),
+    borrow_date DATE,
+    return_date DATE,
+    reservation_status TINYINT,
+    overdue_status TINYINT,
+    user_role VARCHAR(20),
+    book_category VARCHAR(30)
+);
+    DROP TABLE IF EXISTS users;
+
+CREATE TABLE users (
+    user_id VARCHAR(50) PRIMARY KEY,
+    user_role VARCHAR(20)
+);
+    DROP TABLE IF EXISTS books;
+
+CREATE TABLE books (
+    book_id VARCHAR(50) PRIMARY KEY,
+    book_category VARCHAR(30)
+);
+    DROP TABLE IF EXISTS reservations;
+
+CREATE TABLE reservations (
+    user_id VARCHAR(50) PRIMARY KEY,
+    book_id VARCHAR(50),
+    reservation_status BOOLEAN,
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (book_id) REFERENCES books(book_id)
+);
+
+LOAD DATA INFILE 'library_data.csv'
+INTO TABLE transactions
+FIELDS TERMINATED BY ','
+IGNORE 1 ROWS
+(user_id, book_id, borrow_date, return_date,
+ @reservation_status, @overdue_status, user_role, book_category)
+SET
+reservation_status = CASE
+    WHEN LOWER(@reservation_status) = 'true' THEN 1
+    ELSE 0
+END,
+overdue_status = CASE
+    WHEN LOWER(@overdue_status) = '1' THEN 1
+    ELSE 0
+END;
+SELECT 
+    reservation_status,
+    CASE 
+        WHEN reservation_status = 1 THEN 'True' 
+        ELSE 'False' 
+    END AS readable_boolean
+FROM transactions;
+
+INSERT INTO users (user_id, user_role)
+SELECT DISTINCT user_id, user_role
+FROM transactions;
+
+INSERT INTO books (book_id, book_category)
+SELECT DISTINCT book_id, book_category
+FROM transactions;
+
+INSERT INTO reservations (user_id, book_id, reservation_status)
+SELECT  DISTINCT user_id, book_id, reservation_status
+FROM transactions;
+SELECT * FROM reservations;
+DROP TABLE transactions;
+

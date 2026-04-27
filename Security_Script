@@ -1,0 +1,11 @@
+CREATE ROLE read_only_role;
+GRANT SELECT ON library_db.* TO read_only_role;
+CREATE USER 'student'@'localhost' IDENTIFIED BY 'study123';
+CREATE USER 'staff'@'localhost' IDENTIFIED BY 'staff456';
+CREATE USER 'faculty'@'localhost' IDENTIFIED BY 'faculty789';
+GRANT read_only_role TO 'student'@'localhost';
+GRANT read_only_role TO 'staff'@'localhost';
+GRANT read_only_role TO 'faculty'@'localhost';
+SET DEFAULT ROLE read_only_role FOR 'student'@'localhost';
+SET DEFAULT ROLE read_only_role FOR 'staff'@'localhost';
+SET DEFAULT ROLE read_only_role FOR 'faculty'@'localhost';
